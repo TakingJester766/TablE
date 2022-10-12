@@ -1,0 +1,62 @@
+.App {
+  text-align: center;
+  padding-left: calc(100vw - 100%);
+}
+
+.attributes {
+  text-align: center;
+  list-style-position: inside;
+}
+
+.list {
+  list-style-position: inside;
+}
+
+.inputField {
+  background-color : #b31010;
+}
+
+.leaderboard {
+  text-align: center;
+}
+
+div.container {
+  text-align: center;
+}
+
+ul.leaderboard {
+  display: inline-block;
+  text-align: left;
+}
+
+img.diamond {  
+  max-width: 2%;  
+  height: auto;
+  position: relative;
+  top: -2.75px;
+}
+
+.diamondHeader {
+  max-width: 2%;
+  height: auto;
+  position: relative;
+}
+
+img.moneybag {
+  max-width: 4%;  
+  height: auto;
+  position: relative;
+}
+
+#footer {
+  position: absolute;
+  bottom: 0;
+  width: 98%;
+  height: 2.5rem;            /* Footer height */
+}
+
+img.twitter {
+  max-width: 2%;  
+  height: auto;
+  position: relative; 
+}

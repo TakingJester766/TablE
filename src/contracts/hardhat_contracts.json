@@ -1,0 +1,419 @@
+{
+  "31337": {
+    "localhost": {
+      "name": "localhost",
+      "chainId": "31337",
+      "contracts": {
+        "YourContract": {
+          "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+          "abi": [
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "gameNumber",
+                  "type": "uint256"
+                }
+              ],
+              "name": "IncGameNumber",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "previousOwner",
+                  "type": "address"
+                },
+                {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "newOwner",
+                  "type": "address"
+                }
+              ],
+              "name": "OwnershipTransferred",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "address",
+                  "name": "sender",
+                  "type": "address"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "string",
+                  "name": "purpose",
+                  "type": "string"
+                }
+              ],
+              "name": "SetPurpose",
+              "type": "event"
+            },
+            {
+              "stateMutability": "payable",
+              "type": "fallback"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "inputId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "abortReq",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "inputId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                }
+              ],
+              "name": "addReq",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "string",
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "inputId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "buyinAmount",
+                  "type": "uint256"
+                }
+              ],
+              "name": "buyin",
+              "outputs": [],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "newInitFee",
+                  "type": "uint256"
+                }
+              ],
+              "name": "changeInitFee",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "feesPending",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "gameNumber",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "name": "idToGame",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "host",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "gameId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "buyinRequirement",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "etherWithdrawalReqs",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "gamePot",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "tableWithdrawalReqs",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "playerCount",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "verifiedWithdrawalReqs",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "endedBuyin",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "initFee",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "buyinReq",
+                  "type": "uint256"
+                }
+              ],
+              "name": "initializeGame",
+              "outputs": [],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "owner",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "inputId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "payout",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "name": "playerInfo",
+              "outputs": [
+                {
+                  "internalType": "string",
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "gameId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "buyinAmount",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "withdrawalAmount",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "withdrawalReq",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "verifyReqs",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "hasWithdrawn",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "purpose",
+              "outputs": [
+                {
+                  "internalType": "string",
+                  "name": "",
+                  "type": "string"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "renounceOwnership",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address payable",
+                  "name": "_to",
+                  "type": "address"
+                }
+              ],
+              "name": "sendViaCall",
+              "outputs": [],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "string",
+                  "name": "newPurpose",
+                  "type": "string"
+                }
+              ],
+              "name": "setPurpose",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "inputId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "terminateBuyin",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "newOwner",
+                  "type": "address"
+                }
+              ],
+              "name": "transferOwnership",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "inputId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "verifyRequests",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "withdrawFees",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "stateMutability": "payable",
+              "type": "receive"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
