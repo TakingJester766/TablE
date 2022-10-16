@@ -52,6 +52,7 @@ contract YourContract is Ownable {
         uint8 playerCount; // Tracks # of of players in a game
         uint8 verifiedWithdrawalReqs; // Tracks # of verifs that withdrawal requests are valid
         bool endedBuyin; // Host function to end buyin stage
+        address[] playerList;
     }
     
     struct Player {
@@ -70,19 +71,34 @@ contract YourContract is Ownable {
     // Mapping for locating each game's details
     mapping(uint => Game) public idToGame; // To call Game struct to see game details
 
-    // Array of Player structs
-    Player[] private players; 
-
     // Array for Game structs. Allows games to be played continuously by resetting value in accordance with the current array struct
     Game[] private games;
+
+    // QUICK MAPPING FOR TESTS----------------------------------------------------------------------------------------------
+
+
+    mapping(uint => string) public testMapping;
+
+
+    function setMapping() public {
+        testMapping[1] = "My guy tf are you dooooing";
+    }
+
+    function getTestMapping() public view returns (string memory){
+        return testMapping[1];
+        console.log(testMapping[1]);
+    }
+
+
 
     // ------------------------------------ Functions to enable new games --------------------------------------
 
     function initializeGame(uint buyinReq) public payable {
         require(initFee == 1000000000000000, "In order to prevent spam games that never resolve, each game initialization will cost  ether.");
         require(playerInfo[msg.sender].gameId == 0, "You must finish your current game before starting a new one");
+        address sender = msg.sender;
         addFeesPending(initFee);
-        idToGame[gameNumber] = Game(msg.sender, gameNumber, buyinReq, 0, 0, 0, 0, 0, false);
+        idToGame[gameNumber] = Game(msg.sender, gameNumber, buyinReq, 0, 0, 0, 0, 0, false, playerList.push(sender));
         games.push(idToGame[gameNumber]);
         incGameNumber();
     }    
@@ -101,9 +117,8 @@ contract YourContract is Ownable {
         require (buyinAmount >= idToGame[inputId].buyinRequirement, "Check the minumum buyin requirement, it appears it is higher than your deposit!");
         payable(this).transfer(buyinAmount);
         playerInfo[msg.sender] = Player(name, inputId, msg.value, 0, false, false, false);
-        players.push(playerInfo[msg.sender]);
         idToGame[inputId].playerCount++;
-        idToGame[playerInfo[msg.sender].gameId].gamePot += msg.value;
+        idToGame[inputId].gamePot += msg.value;
     }
 
     // For host to prevent further buyins
