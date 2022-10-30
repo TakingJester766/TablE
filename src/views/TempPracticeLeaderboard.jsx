@@ -2,7 +2,7 @@ import { useContractReader, useUserProviderAndSigner } from "eth-hooks";
 import { ethers, utils, formatUnits } from "ethers";
 import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { Button, Input, Select, Radio, Table } from "antd";
+import { Button, Input, Select, Radio } from "antd";
 import { useEffect } from "react";
 import { Account, Address, Balance, Events } from "../components";
 import QRCode from 'qrcode';
@@ -14,7 +14,7 @@ import QRCode from 'qrcode';
  * @param {*} readContracts contracts from current chain already pre-loaded using ethers contract module. More here https://docs.ethers.io/v5/api/contract/contract/
  * @returns react component
  **/
-function OwnerControls({
+function TempPracticeLeaderboard({
     address,
     mainnetProvider,
     localProvider,
@@ -24,6 +24,11 @@ function OwnerControls({
     readContracts,
     writeContracts,
 }) {
+
+
+    const gameInfo = useContractReader(readContracts, "YourContract", "getGameInfo", "1");
+
+    const playerInfo = useContractReader(readContracts, "YourContract", "getPlayerInfo");
 
     /*
     address host; 0
@@ -110,50 +115,20 @@ function OwnerControls({
     function print() {
       console.log(address.toString());
     }*/
-
-    const gameInfo = useContractReader(readContracts, "YourContract", "getGameInfo", "1");
-
-    //const playerInfo = useContractReader(readContracts, "YourContract", "getPlayerInfo");
-
-    let result = useContractReader(writeContracts, "YourContract", "getPlayerInfo");
-
-    function print() {
-      console.log(result.toString());
-    }
-
+    
     return (
 
         <div>
 
 
-            {/*<h1>{playerInfo}</h1>*/}
-            <h1>{address}</h1>
+            <h1>lol</h1>
 
-            <Button
-          type="primary"
-          style={{ marginTop: 8 }}
-          onClick={async () => {   
-              const result = tx(writeContracts.YourContract.setTestMapping(), update => {
-                  console.log("📡 Transaction Update:", update);
-                    if (update && (update.status === "confirmed" || update.status === 1)) {
-                      console.log(" 🍾 Transaction " + update.hash + " finished!");
-                      console.log(" ⛽️ " + update.gasUsed + "/" + (update.gasLimit || update.gas) + " @ " + parseFloat(update.gasPrice) / 1000000000 + " gwei");
-                    } else {
-                      return;
-                    }
-                    });
-                    console.log("awaiting metamask/web3 confirm result...", result);
-                    console.log(await result);
-              }
-          }>Join Game</Button>
-
-          <Button onClick={print}>Print num</Button>
 
         </div>
     )
 }
 
-export default OwnerControls;
+export default TempPracticeLeaderboard;
 
 
 

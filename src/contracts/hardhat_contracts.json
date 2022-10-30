@@ -5,8 +5,13 @@
       "chainId": "31337",
       "contracts": {
         "YourContract": {
-          "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+          "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
           "abi": [
+            {
+              "inputs": [],
+              "stateMutability": "nonpayable",
+              "type": "constructor"
+            },
             {
               "anonymous": false,
               "inputs": [
@@ -37,25 +42,6 @@
                 }
               ],
               "name": "OwnershipTransferred",
-              "type": "event"
-            },
-            {
-              "anonymous": false,
-              "inputs": [
-                {
-                  "indexed": false,
-                  "internalType": "address",
-                  "name": "sender",
-                  "type": "address"
-                },
-                {
-                  "indexed": false,
-                  "internalType": "string",
-                  "name": "purpose",
-                  "type": "string"
-                }
-              ],
-              "name": "SetPurpose",
               "type": "event"
             },
             {
@@ -163,6 +149,285 @@
                   "type": "uint256"
                 }
               ],
+              "name": "games",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "host",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "gameId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "buyinRequirement",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "etherWithdrawalReqs",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "gamePot",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "tableWithdrawalReqs",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "playerCount",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "verifiedWithdrawalReqs",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "endedBuyin",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "isActive",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "id",
+                  "type": "uint256"
+                }
+              ],
+              "name": "getGameInfo",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "address",
+                      "name": "host",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "gameId",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "buyinRequirement",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "etherWithdrawalReqs",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "gamePot",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "tableWithdrawalReqs",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "playerCount",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "verifiedWithdrawalReqs",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "endedBuyin",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isActive",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "address[]",
+                      "name": "playerList",
+                      "type": "address[]"
+                    }
+                  ],
+                  "internalType": "struct YourContract.Game",
+                  "name": "",
+                  "type": "tuple"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "addr",
+                  "type": "address"
+                }
+              ],
+              "name": "getOtherPlayerInfo",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "string",
+                      "name": "name",
+                      "type": "string"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "gameId",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "buyinAmount",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "withdrawalAmount",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "withdrawalReq",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "verifyReqs",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "hasWithdrawn",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isInGame",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isHost",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct YourContract.Player",
+                  "name": "",
+                  "type": "tuple"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "getPlayerInfo",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "string",
+                      "name": "name",
+                      "type": "string"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "gameId",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "buyinAmount",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "withdrawalAmount",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "withdrawalReq",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "verifyReqs",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "hasWithdrawn",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isInGame",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isHost",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct YourContract.Player",
+                  "name": "",
+                  "type": "tuple"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "getTestMapping",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
               "name": "idToGame",
               "outputs": [
                 {
@@ -209,6 +474,11 @@
                   "internalType": "bool",
                   "name": "endedBuyin",
                   "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "isActive",
+                  "type": "bool"
                 }
               ],
               "stateMutability": "view",
@@ -228,19 +498,6 @@
               "type": "function"
             },
             {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "buyinReq",
-                  "type": "uint256"
-                }
-              ],
-              "name": "initializeGame",
-              "outputs": [],
-              "stateMutability": "payable",
-              "type": "function"
-            },
-            {
               "inputs": [],
               "name": "owner",
               "outputs": [
@@ -254,13 +511,7 @@
               "type": "function"
             },
             {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "inputId",
-                  "type": "uint256"
-                }
-              ],
+              "inputs": [],
               "name": "payout",
               "outputs": [],
               "stateMutability": "nonpayable",
@@ -310,19 +561,16 @@
                   "internalType": "bool",
                   "name": "hasWithdrawn",
                   "type": "bool"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "purpose",
-              "outputs": [
+                },
                 {
-                  "internalType": "string",
-                  "name": "",
-                  "type": "string"
+                  "internalType": "bool",
+                  "name": "isInGame",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "isHost",
+                  "type": "bool"
                 }
               ],
               "stateMutability": "view",
@@ -336,29 +584,28 @@
               "type": "function"
             },
             {
-              "inputs": [
-                {
-                  "internalType": "address payable",
-                  "name": "_to",
-                  "type": "address"
-                }
-              ],
-              "name": "sendViaCall",
+              "inputs": [],
+              "name": "setTestMapping",
               "outputs": [],
-              "stateMutability": "payable",
+              "stateMutability": "nonpayable",
               "type": "function"
             },
             {
               "inputs": [
                 {
                   "internalType": "string",
-                  "name": "newPurpose",
+                  "name": "name",
                   "type": "string"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "buyinReq",
+                  "type": "uint256"
                 }
               ],
-              "name": "setPurpose",
+              "name": "startGame",
               "outputs": [],
-              "stateMutability": "nonpayable",
+              "stateMutability": "payable",
               "type": "function"
             },
             {
@@ -372,6 +619,25 @@
               "name": "terminateBuyin",
               "outputs": [],
               "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "name": "testMapping",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
               "type": "function"
             },
             {

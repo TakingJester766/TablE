@@ -1,7 +1,7 @@
 import React from "react";
 import { Typography } from "antd";
 import twitter from '../themes/images/twitter.png';
-import twitter from '../themes/images/github.png';
+import github from '../themes/images/github.png';
 
 
 
@@ -18,7 +18,7 @@ export default function Footer({ link, title, subTitle, ...props }) {
         <a href="https://twitter.com/ZimAlternate" target="_blank">
             <img className="twitter" src={twitter} alt="twitter-bird"/>
         </a>
-        <a>
+        <a href="https://github.com/TakingJester766/TablE" target="_blank">
             <img className="github" src={github} alt="github-cat"/>
         </a>
 

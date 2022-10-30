@@ -1,0 +1,148 @@
+import { useContractReader } from "eth-hooks";
+import { ethers, utils } from "ethers";
+import React, { useState, useRef } from "react";
+import { Link } from "react-router-dom";
+import { Button, Input, Select, Radio } from "antd";
+import { useEffect } from "react";
+import { QrCode, Account, StartGame } from "../components";
+
+
+
+/**
+ * web3 props can be passed from '../App.jsx' into your local view component for use
+ * @param {*} yourLocalBalance balance on current network
+ * @param {*} readContracts contracts from current chain already pre-loaded using ethers contract module. More here https://docs.ethers.io/v5/api/contract/contract/
+ * @returns react component
+ **/
+function HostGame({
+    address,
+    mainnetProvider,
+    localProvider,
+    yourLocalBalance,
+    price,
+    tx,
+    readContracts,
+    writeContracts
+}) {
+
+    const gameNumber = useContractReader(readContracts, "YourContract", "gameNumber");
+
+    const [inputValue, setInputValue] = useState("");
+    const [gameId, setGameId] = useState("");
+
+    const buyinReq = useRef(0);
+    const gameInput = useRef("Loading...");    
+
+    const name = useRef("");
+    const [gameName, setName] = useState(""); 
+    
+    const [isStarted, setIsStarted] = useState(false);
+
+    // For dropdown
+
+    const [isShown, setIsShown] = useState(false);
+
+    const handleClick = event => {
+        // 👇️ toggle shown state
+        setIsShown(current => !current);
+    
+        // 👇️ or simply set it to true
+        // setIsShown(true);
+    };
+
+    // Logic for showing/not showing new game menu
+
+    let tempAddress = "0x59D101AD9DdeA84C0e11DA137000Dd91A0b20c79";
+
+    
+
+    function print() {
+        console.log({address})
+    }
+    
+
+    return (
+        <div>
+            <h1>Host a game</h1>
+            
+            <h1>Current game number: {gameNumber?.toString()}</h1>
+              
+          
+            <br />
+
+            {isStarted ? <QrCode/> : 
+            <div>
+            <Input
+                style={{ width:"300px" }}
+                placeholder="Name for game"
+                type="text"
+                value={gameName}
+                name={name}
+                onChange={(e) => setName(e.target.value)}>
+            </Input>
+                <br />
+                <br />
+            <Input
+                style={{ width:"300px" }}
+                placeholder="Minimum game buyin" 
+                type="primary"
+                value={inputValue}
+                name={buyinReq}
+                onChange={(e) => setInputValue(e.target.value)}>
+            </Input>
+                <br />
+                <br />
+            <Button
+                type="primary"
+                style={{ marginTop: 8 }}
+                onClick={async () => {                      
+                if (inputValue == null || inputValue == 0) {
+                    alert("Make sure to complete all fields before starting the game.");
+                    return;
+                } else {
+                    setIsStarted(true);
+                    const result = tx(writeContracts.YourContract.initializeGame(gameName, utils.parseEther(`${inputValue.toString()}`), {value: 1000000000000000}), update => {
+                    console.log("📡 Transaction Update:", update);
+                    if (update && (update.status === "confirmed" || update.status === 1)) {
+                        console.log(" 🍾 Transaction " + update.hash + " finished!");
+                        console.log(" ⛽️ " + update.gasUsed + "/" + (update.gasLimit || update.gas) + " @ " + parseFloat(update.gasPrice) / 1000000000 + " gwei");
+                        console.log(`New game initialize: requirement of ${inputValue} ether at a gameId of ${gameNumber}`);
+                    }
+                });
+                console.log("awaiting metamask/web3 confirm result...", result);
+                console.log(await result);
+            }}}>Start New Game</Button> 
+            </div>
+            
+            
+            
+            
+            }
+            <br />
+            <button onClick={print}>Print</button>
+
+
+            
+            
+            {/* For Dropdown ---------------------------------------------------------------------------------------------------- */}
+           
+
+            
+
+
+
+        </div>
+    )
+}
+
+export default HostGame;
+
+/*
+function print() {
+    console.log(account)
+}
+
+<button onClick={print}></button>
+
+*/
+

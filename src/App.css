@@ -56,7 +56,24 @@ img.moneybag {
 }
 
 img.twitter {
+  left: 5px;
   max-width: 2%;  
   height: auto;
-  position: relative; 
+  position: relative;
+  margin: 5px; 
 }
+
+img.github {
+  left: 20px;
+  max-width: 1.75%;  
+  height: auto;
+  position: relative; 
+  margin: 7px; 
+}
+/*
+img.rightarrow {
+  max-width: 2%;  
+  height: auto;
+  position: relative;
+  margin: 5px; 
+}*/

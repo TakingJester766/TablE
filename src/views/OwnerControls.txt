@@ -1,0 +1,301 @@
+import { useContractReader, useUserProviderAndSigner } from "eth-hooks";
+import { ethers, utils, formatUnits } from "ethers";
+import React, { useState, useRef } from "react";
+import { Link } from "react-router-dom";
+import { Button, Input, Select, Radio } from "antd";
+import { useEffect } from "react";
+import { Account, Address, Balance, Events } from "../components";
+import QRCode from 'qrcode';
+
+
+/**
+ * web3 props can be passed from '../App.jsx' into your local view component for use
+ * @param {*} yourLocalBalance balance on current network
+ * @param {*} readContracts contracts from current chain already pre-loaded using ethers contract module. More here https://docs.ethers.io/v5/api/contract/contract/
+ * @returns react component
+ **/
+function OwnerControls({
+    address,
+    mainnetProvider,
+    localProvider,
+    yourLocalBalance,
+    price,
+    tx,
+    readContracts,
+    writeContracts,
+  }) {
+
+    const purpose = useContractReader(readContracts, "YourContract", "initFee");
+    const [newInitFee, changeInitFee] = useState("loading...");
+
+    const initFee = useContractReader(readContracts, "YourContract", "initFee");
+    
+    const feesPending = useContractReader(readContracts, "YourContract", "feesPending");
+
+    const gameInfo = useContractReader(readContracts, "YourContract", "idToGame", "1"); // Reads gameinfo on game 1
+    const info = gameInfo?.toString(); // Converts gameInfo to string
+    const infoSplit = info?.split(","); // Converts blob to array that can be indexed
+
+    const playerStats = useContractReader(readContracts, "YourContract", "playerInfo", address); // Mapping link via player info (Address => Struct)
+    const rawInfo = playerStats?.toString(); // Does same as info
+    const playerInfoSplit = rawInfo?.split(","); // Does same as infoSplit
+
+    const players = useContractReader(readContracts, "YourContract", "getPlayerInfo", "0");
+
+    {/*
+    address host; 0
+    uint gameId; 1
+    uint buyinRequirement; 2
+    uint etherWithdrawalReqs; 3        
+    uint gamePot; 4
+    uint8 tableWithdrawalReqs; 5
+    uint8 playerCount; 6
+    uint8 verifiedWithdrawalReqs; 7
+    bool endedBuyin; 8
+    */}
+
+    function getBuyinRequirement() {
+      if (infoSplit == null) {
+        return 0;
+      } else {
+        return utils.formatUnits(infoSplit[2].toString());
+      }
+    }
+
+    function getHost() {
+      if (infoSplit == null) {
+        return 0;
+      } else {
+        let rawAddr = (infoSplit[0]);
+        let formattedAddr = <Address address={rawAddr} ensProvider={mainnetProvider} fontSize={16}/>;
+        return formattedAddr;
+      }
+    }
+
+    function getGamePot() {
+      if (infoSplit == null) {
+        return 0;
+      } else {
+        return utils.formatUnits(infoSplit[4].toString());
+      }
+    }
+
+    // Functions for getting player data
+
+    /*
+    string name; 0
+        uint gameId; 1
+        uint buyinAmount; 2
+        uint withdrawalAmount; 3
+        bool withdrawalReq; 4
+        bool verifyReqs; 5
+        bool hasWithdrawn; 6
+        bool isInGame; 7
+        bool isHost; 8
+    */
+
+    function getBuyinAmount() {
+      if (playerInfoSplit == null) {
+        return 0;
+      } else {
+        return utils.formatUnits(playerInfoSplit[2].toString());
+      }
+    } 
+    
+    function getGameId() {
+      if (playerInfoSplit == null) {
+        return 0;
+      } else {
+        return utils.formatUnits(playerInfoSplit[1].toString());
+      }
+    }       
+
+    function getIsHost() {
+      if (playerInfoSplit == null) {
+        return false;
+      } else {
+        if (playerInfoSplit[8] == false) {
+          return "false";
+        } else {
+          return "true";
+        }
+      }
+    }
+
+    function print() {
+      console.log(players);
+    }
+
+    return (
+
+
+
+
+        <div>
+          <div>
+
+            <Button
+              onClick={() => {
+                tx(writeContracts.YourContract.idToGame("1"));
+              }}
+            >
+              Print
+            </Button>
+              <br />
+            <Button
+              onClick={() => {
+                tx(writeContracts.YourContract.playerInfo(address));                
+              }}
+            >
+              Print PlayerInfo
+            </Button>
+
+            <Button
+              onClick={() => {
+                tx(writeContracts.YourContract.getPlayers("0"));                
+              }}
+            >
+              Print player addresses
+            </Button>
+
+            <br />
+
+            <br />
+            
+            
+            <h2>{gameInfo?.toString()}</h2>
+
+
+            <h3>Required Ether: {getBuyinRequirement()}</h3>
+            
+            <h3>Game Host: {getHost()}</h3>
+
+            <h3>Table Value: {getGamePot()}</h3>
+
+            <h3>Buyin Amount: {getBuyinAmount()}</h3>
+
+            <h3>GameId: {getGameId()}</h3>
+
+
+            <h3>Is host? : {getIsHost()}</h3>
+
+            <Button onClick={print()}>Print Players</Button>
+            
+
+          </div>
+
+
+        </div>
+    )
+}
+
+export default OwnerControls;
+
+/*<button onClick={print}>Print</button>      
+function print() {
+    console.log(inputValue);
+}
+*/
+
+
+
+
+
+
+{/*
+onClick={async () => {        
+              const result = tx(writeContracts.YourContract.buyin(gameName, gameId.toString(), utils.parseEther(`${inputValue.toString()}`), {value : utils.parseEther(`${inputValue.toString()}`)}
+              ), update => {
+                  console.log("📡 Transaction Update:", update);
+                    if (update && (update.status === "confirmed" || update.status === 1)) {
+                      console.log(" 🍾 Transaction " + update.hash + " finished!");
+                      console.log(" ⛽️ " + update.gasUsed + "/" + (update.gasLimit || update.gas) + " @ " + parseFloat(update.gasPrice) / 1000000000 + " gwei");
+                    } else {
+                      return;
+                    }
+                    });
+                    console.log("awaiting metamask/web3 confirm result...", result);
+                    console.log(await result);
+          }}>Join Game</Button>  
+
+
+
+
+*/}
+
+
+
+
+          {/*
+            <div>
+                <h1>What are you doing here, ANON? (⌐■_■)</h1>
+                
+                <h1>Current Fee: {utils.formatEther(`${initFee?.toString()}`)}</h1>
+
+
+                <Input style={{ width:"300px" }}
+                onChange={e => {
+                    changeInitFee(e.target.value);
+                }}
+                /><br/>
+                <Button
+                    style={{ marginTop: 8 }}
+                    onClick={async () => {
+                   
+                    const result = tx(writeContracts.YourContract.changeInitFee(utils.parseEther(`${newInitFee.toString()}`)), update => {
+                        console.log("📡 Transaction Update:", update);
+                        if (update && (update.status === "confirmed" || update.status === 1)) {
+                        console.log(" 🍾 Transaction " + update.hash + " finished!");
+                        console.log(
+                            " ⛽️ " +
+                            update.gasUsed +
+                            "/" +
+                            (update.gasLimit || update.gas) +
+                            " @ " +
+                            parseFloat(update.gasPrice) / 1000000000 +
+                            " gwei",
+                        );
+                        }
+                    });
+                    console.log("awaiting metamask/web3 confirm result...", result);
+                    console.log(await result);
+                    }}>
+                    Set New Game Initialization Fee
+                </Button>
+            </div>        
+
+            <div>
+
+            <h1>Fees pending: {utils.formatEther(`${feesPending?.toString()}`)}</h1>
+               
+            <Button
+            style={{ marginTop: 8 }}
+            onClick={async () => {
+              const result = tx(writeContracts.YourContract.withdrawFees(), update => {
+                console.log("📡 Transaction Update:", update);
+                if (update && (update.status === "confirmed" || update.status === 1)) {
+                  console.log(" 🍾 Transaction " + update.hash + " finished!");
+                  console.log(
+                    " ⛽️ " +
+                      update.gasUsed +
+                      "/" +
+                      (update.gasLimit || update.gas) +
+                      " @ " +
+                      parseFloat(update.gasPrice) / 1000000000 +
+                      " gwei",
+                  );
+                }
+              });
+              console.log("awaiting metamask/web3 confirm result...", result);
+              console.log(await result);
+            }}
+          >
+            Withdraw Fees
+          </Button>           
+        
+
+
+
+          </div>*/}
+
+          

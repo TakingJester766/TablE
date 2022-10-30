@@ -6,6 +6,8 @@ import { useHistory } from "react-router-dom";
 import { Address, Balance, Events } from "../components";
 import diamond from '../themes/images/diamond.png';
 import moneybag from '../themes/images/moneybag.png';
+import rightarrow from '../themes/images/right-arrow.png';
+
 
 const {Option} = Select;
 
@@ -33,8 +35,16 @@ function Home({
   // gameNumber import ---------------------------------------------------------------------------------------------
 
   const gameNumber = useContractReader(readContracts, "YourContract", "gameNumber");
- 
+   
   const history = useHistory();
+  
+  function hostGame() {
+    history.push("/HostGame");
+  }
+
+  function joinGame() {
+    history.push("/Game");
+  }
 
   // ---------------------------------------------------------------------------------------------------------------
   
@@ -44,16 +54,28 @@ function Home({
         <h1><img className="diamond" src={diamond} alt="card" />TablΞ</h1>
       </div>
       <h4 id="grey">The best place to make and lose money against your friends.</h4>
-      <br/>{/*
-        <Button a href='/HostGame'>Host a Game</Button>
-  <br/><br/>*/}
+      <br/>
 
       <div className="main-content">
 
-        
+        <Button
+          type="primary"
+          onClick={hostGame}
+          >Host a Game 
+        </Button> 
+        <br /><br />
+        <Button
+          type="primary"
+          onClick={joinGame}
+        >Join a Game  
+        </Button>    
 
-        <img className="moneybag" src={moneybag} alt="money-bag"/>
+
+        
       </div>
+      <br />
+
+      <img className="moneybag" src={moneybag} alt="money-bag"/>
 
 
 

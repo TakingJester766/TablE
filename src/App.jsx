@@ -247,6 +247,10 @@ function App(props) {
 
   const faucetAvailable = localProvider && localProvider.connection && targetNetwork.name.indexOf("local") !== -1;
 
+  function print() {
+    console.log(address)
+  }
+
   return (
     <div className="App">
       {/* ✏️ Edit the header and change the title to your project name */}
@@ -296,10 +300,10 @@ function App(props) {
         <Menu.Item key="/HostGame">
           <Link to="HostGame">Host a Game</Link>
         </Menu.Item>
-        <Menu.Item key="/debug">
+        {/*<Menu.Item key="/debug">
           <Link to="/debug">Debug Contracts</Link>
         </Menu.Item>
-        {/*<Menu.Item key="OwnerControls">
+        <Menu.Item key="OwnerControls">
           <Link to="OwnerControls">Owner Functions</Link>
       </Menu.Item>*/}
         
@@ -335,7 +339,7 @@ function App(props) {
       <Switch>
         <Route exact path="/">
           {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
-          <Home yourLocalBalance={yourLocalBalance} readContracts={readContracts} writeContracts={writeContracts} tx={tx} gameNumber={gameNumber}/>
+          <Home yourLocalBalance={yourLocalBalance} readContracts={readContracts} writeContracts={writeContracts} tx={tx} gameNumber={gameNumber} address={address}/>
         </Route>
         <Route exact path="/debug">
           {/*
@@ -410,12 +414,12 @@ function App(props) {
           <Game yourLocalBalance={yourLocalBalance} readContracts={readContracts} writeContracts={writeContracts} tx={tx}/>
         </Route>
         <Route path="/HostGame">
-          <HostGame yourLocalBalance={yourLocalBalance} readContracts={readContracts} writeContracts={writeContracts} tx={tx}/>
+          <HostGame yourLocalBalance={yourLocalBalance} readContracts={readContracts} writeContracts={writeContracts} tx={tx} address={address}/>
         </Route>
-        {/*
+        
         <Route path="/OwnerControls">
-          <OwnerControls yourLocalBalance={yourLocalBalance} readContracts={readContracts} writeContracts={writeContracts} tx={tx}/>
-          </Route>*/}
+          <OwnerControls yourLocalBalance={yourLocalBalance} readContracts={readContracts} writeContracts={writeContracts} tx={tx} address={address}/>
+          </Route>
       </Switch>
 
       <ThemeSwitch />
@@ -459,7 +463,7 @@ function App(props) {
           </Col>
         </Row>
       </div>
-      <Footer/>
+        <Footer/>
     </div>
   );
 }
