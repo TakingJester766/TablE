@@ -463,7 +463,7 @@ function App(props) {
           </Col>
         </Row>
       </div>
-        <Footer/>
+        {/*<Footer/>*/}
     </div>
   );
 }

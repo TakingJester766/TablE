@@ -115,39 +115,56 @@ function OwnerControls({
 
     //const playerInfo = useContractReader(readContracts, "YourContract", "getPlayerInfo");
 
-    let result = useContractReader(writeContracts, "YourContract", "getPlayerInfo");
+    // ---------------------------------------------------------------------------------------------------------------
+
+
+    const [addr, setAddress] = useState("");
+    const userMapping = useContractReader(writeContracts, "YourContract", "getMapping", [addr]);
+
+
+    function getAddressNumber() {
+      if (userMapping == null) {
+        return "Set the mapping and put in an address!"
+      } else {
+        return userMapping;
+      }
+    }
 
     function print() {
-      console.log(result.toString());
+      console.log(userMapping);
     }
 
     return (
 
         <div>
 
+          <Button
+            type="primary"
+            style={{ marginTop: 8 }}
+            onClick={async () => {   
+              const result = tx(writeContracts.YourContract.setMapping(), update => {
+                console.log("📡 Transaction Update:", update);
+                if (update && (update.status === "confirmed" || update.status === 1)) {
+                  console.log(" 🍾 Transaction " + update.hash + " finished!");
+                  console.log(" ⛽️ " + update.gasUsed + "/" + (update.gasLimit || update.gas) + " @ " + parseFloat(update.gasPrice) / 1000000000 + " gwei");
+                } else {
+                  return;
+                }
+                });
+              console.log("awaiting metamask/web3 confirm result...", result);
+              console.log(await result);
+            }
+          }>Set the mapping!</Button>
+          <br />
 
-            {/*<h1>{playerInfo}</h1>*/}
-            <h1>{address}</h1>
-
-            <Button
-          type="primary"
-          style={{ marginTop: 8 }}
-          onClick={async () => {   
-              const result = tx(writeContracts.YourContract.setTestMapping(), update => {
-                  console.log("📡 Transaction Update:", update);
-                    if (update && (update.status === "confirmed" || update.status === 1)) {
-                      console.log(" 🍾 Transaction " + update.hash + " finished!");
-                      console.log(" ⛽️ " + update.gasUsed + "/" + (update.gasLimit || update.gas) + " @ " + parseFloat(update.gasPrice) / 1000000000 + " gwei");
-                    } else {
-                      return;
-                    }
-                    });
-                    console.log("awaiting metamask/web3 confirm result...", result);
-                    console.log(await result);
-              }
-          }>Join Game</Button>
-
-          <Button onClick={print}>Print num</Button>
+          <Input
+            style={{ width:"300px" }}
+            placeholder="Address to check:"
+            type="text"
+            value={addr}
+            onChange={(e) => setAddress(e.target.value)}>
+          </Input>
+          
 
         </div>
     )
@@ -155,6 +172,7 @@ function OwnerControls({
 
 export default OwnerControls;
 
+{/* <Button onClick={print}>Print num</Button> */}
 
 
           

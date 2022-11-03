@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Button, Input, Table, Space, Tag, Spin  } from "antd";
 import { storeKeyNameFromField } from "@apollo/client/utilities";
 import { Account, Address, Balance, Events } from "../components";
+import { local } from "web3modal";
 
 
 /**
@@ -60,17 +61,9 @@ function Game({
 
   //const host = gameInfo[0];
 
-  
+      // Get info for msg.sender -------------------------------------------------------------------------------------------------------------
 
-  function getPlayerArray() {
-    if (gameInfo == null || gameInfo[10] == null) {
-      return "0x";
-    } else {
-      return gameInfo[10].toString();
-    }
-  }
-
-  const playerInfo = useContractReader(writeContracts, "YourContract", "getPlayerInfo");
+  const playerInfo = useContractReader(writeContracts, "YourContract", "getPlayerInfo"); // Getter for msg.sender info
 
   /*string name; 0
     uint gameId; 1
@@ -82,10 +75,10 @@ function Game({
     bool isInGame; 7
     bool isHost; 8*/
 
-    // Get info for msg.sender -------------------------------------------------------------------------------------------------------------
-
     function getName() {
-      if (playerInfo == null || playerInfo[0] == null) {
+      if (playerInfo == null) {
+        return "playerInfo is undefined.";
+      } else if (playerInfo[0] == null) {
         return "noName";
       } else {
         return playerInfo[0].toString();
@@ -127,17 +120,33 @@ function Game({
       }
     }
 
-    // Get info for other players ------------------------------------------------------------------------------------------------------------
+    // Get info for other players ------------------------------------------------------------------------------------------------------------    
+
+    function getSpecPlayer(index) { // For returning a specific player address from the players array
+      if (gameInfo == null) {
+        return "gameInfo not defined";
+      } else if (gameInfo[10].length == 0) {
+        return "Nobody home!";
+      } else if (0 > gameInfo[10].length - 1) {
+        return "index out of bounds!";
+      } else {
+        return gameInfo[10][index]?.toString();
+      }
+    } 
 
     
-    //const otherPlayerInfo = useContractReader(writeContracts, "YourContract", "getOtherPlayerInfo", loopedAddr);
-
+    const otherPlayerInfo = useContractReader(writeContracts, "YourContract", "getOtherPlayerInfo", [getSpecPlayer(0)]); // Getter for other players based on address input
     
-    
-    /*function getPlayerId() {
-      addr = "0x59D101AD9DdeA84C0e11DA137000Dd91A0b20c79";
 
-    }*/
+    function getOtherPlayerName() {
+      if (otherPlayerInfo == null) {
+        return "otherPlayerInfo is undefined."
+      } else if (otherPlayerInfo == null) {
+        return "noName";
+      } else {
+        return otherPlayerInfo.toString();
+      }
+    }
     
     const data = [
       {
@@ -148,49 +157,7 @@ function Game({
         buyinAmount: getBuyinAmount()
       },
     ];
-
-    const playerListRaw = getPlayerArray();
-    const playerListSplit = playerListRaw.split(',');
-
-    /*function loopedPlayerList(playerListSplit) {
-      if (playerListSplit == null || playerListSplit.length ==  0) {
-        return;
-      } else {
-        for (let i = 0; i < playerListSplit.length; i++) {
-          return playerListSplit[i].toString();
-        }
-      }
-    }*/
-
-    const otherPlayerInfo = useContractReader(writeContracts, "YourContract", "getOtherPlayerInfo", "0x59D101AD9DdeA84C0e11DA137000Dd91A0b20c79");
-
-
-    /*function getOtherPlayerInfo() {
-      if (playerListSplit == null || playerListSplit.length ==  0) {
-        return;
-      } else {
-        for (let i = 0; i < playerListSplit.length; i++) {
-          console.log(otherPlayerInfo(playerListSplit[i]));
-        }
-      }
-    }*/
-
-    function addData(keyNum, player) {
-      data.push({
-        key: keyNum,
-        name: getName(),
-        address: <Address address={player} ensProvider={mainnetProvider} fontSize={16} />,
-        role: getHostStatus(),
-        buyinAmount: getBuyinAmount()
-      })
-    }
-
-    //const leaderboardPlayers = playerListSplit.map((player) => addData(player.toString()));
-
-    
-
-    const playerGameId = getPlayerId();
-  
+   
 
   // TABLE VALUES ---------------------------------------------------------------------------------------------------
 
@@ -226,15 +193,20 @@ function Game({
     },
   ];
 
+  //<Button onClick={printID}>Print Addresses</Button>
 
-  function printID() {
-    console.log(otherPlayerInfo);
-  }
-
-  
   
   return (
     <div><br /> 
+
+      <h1>{getSpecPlayer()}</h1>
+
+      <h1>{getSpecPlayer(0)}</h1> 
+
+
+      <h1>{getName()}</h1>
+      <h1>{otherPlayerInfo?.toString()}</h1>
+  <h1>{getOtherPlayerName()}</h1>
 
       { getGameStatus() ?
       
@@ -414,19 +386,9 @@ function Game({
       </div>
       } 
 
+      
 
-
-
-           
-           
-           
-           
-            
-
-
-
-
-
+   
     </div>
   );
 }

@@ -14,6 +14,19 @@ contract YourContract is Ownable, ReentrancyGuard {
 
     constructor() ReentrancyGuard() {}
 
+    uint public num = 1;
+
+    mapping(address => uint) public addressToNum;
+
+    function setMapping() public {
+        addressToNum[msg.sender] = num;
+        num++;
+    }
+
+    function getMapping(address addr) public view returns (uint) {
+        return addressToNum[addr];
+    }
+
     
     // Declaration of gameNumber: -----------------------------------------------------------------------------------
     //uint public tempNum = 1;

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Button, Input, Table, Space, Tag, Spin  } from "antd";
 import { storeKeyNameFromField } from "@apollo/client/utilities";
 import { Account, Address, Balance, Events } from "../components";
+import { local } from "web3modal";
 
 
 /**
@@ -54,13 +55,15 @@ function Game({
     uint8 playerCount; 6
     uint8 verifiedWithdrawalReqs; 7
     bool endedBuyin; 8
+    bool isActive; 9 
+    address[] playerList; 10
     */
 
   //const host = gameInfo[0];
 
+      // Get info for msg.sender -------------------------------------------------------------------------------------------------------------
 
-
-  const playerInfo = useContractReader(readContracts, "YourContract", "getPlayerInfo");
+  const playerInfo = useContractReader(writeContracts, "YourContract", "getPlayerInfo"); // Getter for msg.sender info
 
   /*string name; 0
     uint gameId; 1
@@ -71,6 +74,24 @@ function Game({
     bool hasWithdrawn; 6
     bool isInGame; 7
     bool isHost; 8*/
+
+    function getName() {
+      if (playerInfo == null) {
+        return "playerInfo is undefined.";
+      } else if (playerInfo[0] == null) {
+        return "noName";
+      } else {
+        return playerInfo[0].toString();
+      }
+    }
+
+    function getBuyinAmount() {
+      if (playerInfo == null || playerInfo[2] == null) {
+        return "0";
+      } else {
+        return utils.formatEther(playerInfo[2].toString());
+      }
+    }
 
 
     function getGameStatus() {
@@ -86,12 +107,95 @@ function Game({
         return 0;
       } else {
         return playerInfo[1];
-      } 
+      }
     }
+
+    function getHostStatus() {
+      if (playerInfo == null || playerInfo[7] == false) {
+        return "Not in game";
+      } else if (playerInfo[8] == false) {
+        return "Member";
+      } else if (playerInfo[8] == true) {
+        return "host";
+      }
+    }
+
+    // Get info for other players ------------------------------------------------------------------------------------------------------------    
+
+    function getSpecPlayer(index) { // For returning a specific player address from the players array
+      if (gameInfo == null) {
+        return "gameInfo not defined";
+      } else if (gameInfo[10].length == 0) {
+        return "Nobody home!";
+      } else if (0 > gameInfo[10].length - 1) {
+        return "index out of bounds!";
+      } else {
+        return gameInfo[10][index]?.toString();
+      }
+    } 
+
+    
+    const otherPlayerInfo = useContractReader(writeContracts, "YourContract", "getOtherPlayerInfo", [getSpecPlayer(0)]); // Getter for other players based on address input
+    
+    //getSpecPlayer(0).toString()
+
+    function getOtherPlayerName() {
+      if (otherPlayerInfo == null) {
+        return "otherPlayerInfo is undefined."
+      } else if (otherPlayerInfo == null) {
+        return "noName";
+      } else {
+        return otherPlayerInfo.toString();
+      }
+    }
+    
+    const data = [
+      {
+        key: "1",
+        name: 'Alex',
+        address: <Address address={"0x59D101AD9DdeA84C0e11DA137000Dd91A0b20c79"} ensProvider={mainnetProvider} fontSize={16} />,
+        role: "Host",
+        buyinAmount: getBuyinAmount()
+      },
+    ];
+
+
+    /*function loopedPlayerList(playerListSplit) {
+      if (playerListSplit == null || playerListSplit.length ==  0) {
+        return;
+      } else {
+        for (let i = 0; i < playerListSplit.length; i++) {
+          return playerListSplit[i].toString();
+        }
+      }
+    }*/
+    
+
+
+    /*function getOtherPlayerInfo() {
+      if (otherPlayerInfo == null) {
+        console.log("value is not defined");
+      } else {
+        console.log(otherPlayerInfo.toString());
+      }
+    }*/
+
+    function addData(keyNum, player) {
+      data.push({
+        key: keyNum,
+        name: getName(),
+        address: <Address address={player} ensProvider={mainnetProvider} fontSize={16} />,
+        role: getHostStatus(),
+        buyinAmount: getBuyinAmount()
+      })
+    }
+
+    //const leaderboardPlayers = playerListSplit.map((player) => addData(player.toString()));
+
+    
 
     const playerGameId = getPlayerId();
   
-
 
   // TABLE VALUES ---------------------------------------------------------------------------------------------------
 
@@ -126,38 +230,21 @@ function Game({
       align: 'center',
     },
   ];
-  const data = [
-    {
-      key: '1',
-      name: 'Alex',
-      address: <Address address="0x59D101AD9DdeA84C0e11DA137000Dd91A0b20c79" fontSize="17"/>,
-      role: "Host",
-      buyinAmount: "1 ether"
-    },
-    {
-      key: '2',
-      name: 'Andrew',
-      address: <Address address="0x212d7cdB8bcA9396196760BAad3ed43538DCf79c" fontSize="17"/>,
-      role: "Member",
-      buyinAmount: "1 ether"
-    },
-    {
-      key: '3',
-      name: 'Kevin',
-      address: <Address address="0xd8098C8D6D474a8C7aA3eFa076C1695DcBc6DD4F" fontSize="17"/>,
-      role: "Member",
-      buyinAmount: "1 ether"
-    },
-  ];
 
-
-  function printID() {
-    console.log(playerInfo[1].toString);
-  }
+  //<Button onClick={printID}>Print Addresses</Button>
 
   
   return (
     <div><br /> 
+
+      <h1>{getSpecPlayer()}</h1>
+
+      <h1>{getSpecPlayer(0)}</h1> 
+
+
+      <h1>{getName()}</h1>
+      <h1>{otherPlayerInfo?.toString()}</h1>
+  <h1>{getOtherPlayerName()}</h1>
 
       { getGameStatus() ?
       
@@ -220,10 +307,10 @@ function Game({
 
       <div className="inGame">
 
-      <h1>{getGameStatus()}</h1>
 
       <div>
 
+        
       {/*For Leaderboard -------------------------------------------------------------------------------------------*/}
 
       <div className="table"> 
@@ -237,7 +324,8 @@ function Game({
 
 
         <div>
-          <h1>Make a Withdrawal Request</h1>
+          <br />
+          { playerInfo[8] == true ?
 
           <div>                    
           <Button
@@ -258,7 +346,7 @@ function Game({
               console.log("awaiting metamask/web3 confirm result...", result);
               console.log(await result);
               }}>End Buyin for Game {gameId}</Button>
-          </div>
+          </div> : null }
 
           <Input
             style={{ width:"300px" }}
@@ -330,24 +418,19 @@ function Game({
             }}>Payout</Button>
         </div>
 
+            
 
         </div>
       </div>
       } 
 
+      
 
-           
-           
-           
-           
-            
-
-
-
-
-
+   
     </div>
   );
 }
 
 export default Game;
+
+{/* <Button onClick={printID}>Print Addresses</Button> */}
