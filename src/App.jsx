@@ -300,10 +300,10 @@ function App(props) {
         <Menu.Item key="/HostGame">
           <Link to="HostGame">Host a Game</Link>
         </Menu.Item>
-        {/*<Menu.Item key="/debug">
+        <Menu.Item key="/debug">
           <Link to="/debug">Debug Contracts</Link>
         </Menu.Item>
-        <Menu.Item key="OwnerControls">
+        {/*<Menu.Item key="OwnerControls">
           <Link to="OwnerControls">Owner Functions</Link>
       </Menu.Item>*/}
         

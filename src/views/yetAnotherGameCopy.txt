@@ -7,6 +7,7 @@ import { storeKeyNameFromField } from "@apollo/client/utilities";
 import { Account, Address, Balance, Events } from "../components";
 import { local } from "web3modal";
 import { getByTestId } from "@testing-library/dom";
+import { useEffect } from "react";
 
 
 /**
@@ -68,6 +69,15 @@ function Game({
     }
   }
 
+  function getPlayerNum() {
+    if (gameInfo == null) {
+      return 0;
+    } else {
+      return gameInfo[6];
+    }
+  }
+
+
   // Checks for msg.sender statuses -------------------------------------------------------------------------------------------------------------------
   
   const senderInfo = useContractReader(writeContracts, "YourContract", "getPlayerInfo"); // Indexing game 1, players 0
@@ -119,7 +129,10 @@ function Game({
 
       // Get playerinfo -------------------------------------------------------------------------------------------------------------------------------
 
-  const playerInfo = useContractReader(writeContracts, "YourContract", "getTest", ["1", "0"]); // Indexing game 1, players 0
+  const [gameIndex, setGameIndex] = useState("1");
+  const [playerIndex, setPlayerIndex] = useState("0");
+
+  let playerInfo = useContractReader(writeContracts, "YourContract", "getTest", [gameIndex, playerIndex]); // Indexing game 1, players 0
 
   function getName() {
     if (playerInfo == null) {
@@ -172,8 +185,29 @@ function Game({
 
     
 // Leaderboard Values -----------------------------------------------------------------------------------------------------------------------------------
+    /*const numbers = [1, 2, 3, 4, 5];
+    const doubled = numbers.map((number) => number * 2);
+    console.log(doubled);*/
+
+    const data = [];
+
+    for (let i = 0; i < getPlayerNum(); i++) {
+
+      
+      data.push(
+        {
+          key: (i + 1).toString(),
+          name: getName()?.toString(),
+          address: <Address address={getPlayerIndex(i)?.toString()} ensProvider={mainnetProvider} fontSize={16} />,
+          role: getHostStatus(),
+          buyinAmount: getBuyinAmount()?.toString(),
+          endingTotal: getWithdrawalAmount()?.toString(),
+          hasVerified: getVerifStatus()
+        }
+      )
+    }
     
-    const data = [
+    /*const data = [
       {
         key: "1",
         name: getName()?.toString(),
@@ -192,8 +226,7 @@ function Game({
         endingTotal: getWithdrawalAmount()?.toString(),
         hasVerified: getVerifStatus()
       }
-    ];
-   
+    ];*/
 
   // TABLE VALUES ---------------------------------------------------------------------------------------------------------------------------------
 
@@ -254,9 +287,7 @@ function Game({
   }
   
   return (
-    <div><br />  
-
-      <h1>{getPlayerIndex(1)?.toString()}</h1>
+    <div><br />
 
       { getGameStatus() == true ?
       

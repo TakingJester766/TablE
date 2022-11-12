@@ -77,3 +77,16 @@ img.rightarrow {
   position: relative;
   margin: 5px; 
 }*/
+
+.payoutButton {
+  margin-left: 16px;
+}
+
+.requestButton {
+  margin-left: 16px;
+  margin-right: 16px;
+}
+
+.errorField {
+  color: #D2042D;
+}

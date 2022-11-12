@@ -7,7 +7,19 @@ import { useEffect } from "react";
 import QRCode from 'qrcode';
 
 
-export default function QrCode({}) {
+export default function QrCode({
+  writeContracts
+}) {
+
+  const senderInfo = useContractReader(writeContracts, "YourContract", "getPlayerInfo"); 
+
+  function getGameId() {
+    if (senderInfo == null || senderInfo[1] == null) {
+      return 0;
+    } else {
+       return senderInfo[1];
+    }
+  }
 
   const [src, setSrc] = useState('');
 
@@ -31,7 +43,7 @@ export default function QrCode({}) {
 
   return (
     <div>
-        <Button type="primary" onClick={handleClick}>Share QR Code</Button>
+        <Button type="primary" onClick={handleClick}>Share QR Code for Joining Game</Button>
         <br />
         {isShown && (
           <div className="App">

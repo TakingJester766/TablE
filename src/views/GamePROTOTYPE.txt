@@ -7,6 +7,7 @@ import { storeKeyNameFromField } from "@apollo/client/utilities";
 import { Account, Address, Balance, Events } from "../components";
 import { local } from "web3modal";
 import { getByTestId } from "@testing-library/dom";
+import { useEffect } from "react";
 
 
 /**
@@ -68,6 +69,15 @@ function Game({
     }
   }
 
+  function getPlayerNum() {
+    if (gameInfo == null) {
+      return 0;
+    } else {
+      return gameInfo[6];
+    }
+  }
+
+
   // Checks for msg.sender statuses -------------------------------------------------------------------------------------------------------------------
   
   const senderInfo = useContractReader(writeContracts, "YourContract", "getPlayerInfo"); // Indexing game 1, players 0
@@ -119,7 +129,10 @@ function Game({
 
       // Get playerinfo -------------------------------------------------------------------------------------------------------------------------------
 
-  const playerInfo = useContractReader(writeContracts, "YourContract", "getTest", ["1", "0"]); // Indexing game 1, players 0
+  const [gameIndex, setGameIndex] = useState("1");
+  const [playerIndex, setPlayerIndex] = useState("0");
+
+  let playerInfo = useContractReader(writeContracts, "YourContract", "getTest", [gameIndex, playerIndex]); // Indexing game 1, players 0
 
   function getName() {
     if (playerInfo == null) {
@@ -172,8 +185,29 @@ function Game({
 
     
 // Leaderboard Values -----------------------------------------------------------------------------------------------------------------------------------
+    /*const numbers = [1, 2, 3, 4, 5];
+    const doubled = numbers.map((number) => number * 2);
+    console.log(doubled);*/
+
+    const data = [];
+
+    for (let i = 0; i < getPlayerNum(); i++) {
+
+      
+      data.push(
+        {
+          key: (i + 1).toString(),
+          name: getName()?.toString(),
+          address: <Address address={getPlayerIndex(i)?.toString()} ensProvider={mainnetProvider} fontSize={16} />,
+          role: getHostStatus(),
+          buyinAmount: getBuyinAmount()?.toString(),
+          endingTotal: getWithdrawalAmount()?.toString(),
+          hasVerified: getVerifStatus()
+        }
+      )
+    }
     
-    const data = [
+    /*const data = [
       {
         key: "1",
         name: getName()?.toString(),
@@ -192,8 +226,7 @@ function Game({
         endingTotal: getWithdrawalAmount()?.toString(),
         hasVerified: getVerifStatus()
       }
-    ];
-   
+    ];*/
 
   // TABLE VALUES ---------------------------------------------------------------------------------------------------------------------------------
 
@@ -254,9 +287,9 @@ function Game({
   }
   
   return (
-    <div><br />  
+    <div><br />
 
-      <h1>{getPlayerIndex(1)?.toString()}</h1>
+      <h1>Game Dashboard</h1>
 
       { getGameStatus() == true ?
       
@@ -376,19 +409,22 @@ function Game({
               if (withdrawalReq == "") {
                 alert("Enter your ending game total to proceed.");
                 return;
-              } else {      
-              const result = tx(writeContracts.YourContract.addReq(playerInfo[1].toString(), utils.parseEther(`${withdrawalReq?.toString()}`)
-              ), update => {
-                  console.log("📡 Transaction Update:", update);
+              } else {
+                if (gameInfo[8] == false) {
+                  alert('Make sure that your host has ended the buyin period.')
+                } else {    
+                  const result = tx(writeContracts.YourContract.addReq(playerInfo[1].toString(), utils.parseEther(`${withdrawalReq?.toString()}`)
+                  ), update => {
+                    console.log("📡 Transaction Update:", update);
                     if (update && (update.status === "confirmed" || update.status === 1)) {
                       console.log(" 🍾 Transaction " + update.hash + " finished!");
                       console.log(" ⛽️ " + update.gasUsed + "/" + (update.gasLimit || update.gas) + " @ " + parseFloat(update.gasPrice) / 1000000000 + " gwei");
                     } else {
                       return;
-                  }});
+                }});
                     console.log("awaiting metamask/web3 confirm result...", result);
                     console.log(await result);
-          }}}>Add Request</Button>    
+          }}}}>Add Request</Button>    
 
 
         </div>
@@ -399,7 +435,12 @@ function Game({
           <Button
             type="primary"
             style={{ marginTop: 8 }}
-            onClick={async () => {     
+            onClick={async () => {
+              if (playerInfo[4] == false) {
+                alert('You must submit your ending total before verifying other players\' amounts.')
+              } else if (gameInfo[8] == false) { 
+                alert('Make sure that your host has ended the buyin period.');
+              } else {
               const result = tx(writeContracts.YourContract.verifyRequests(playerInfo[1].toString()), update => {
               console.log("📡 Transaction Update:", update);
             if (update && (update.status === "confirmed" || update.status === 1)) {
@@ -410,13 +451,20 @@ function Game({
             }});
             console.log("awaiting metamask/web3 confirm result...", result);
             console.log(await result);
-            }}>Verify Requests</Button>   
+            }}}>Verify Requests</Button>   
         </div>  
         <div>
           <Button
             type="primary"
             style={{ marginTop: 8 }}
-            onClick={async () => {     
+            onClick={async () => {
+              if (gameInfo[8] == false) {
+                alert('You still have several steps before payout, including the host ending the buyin period, submitting ending totals, and verifying totals.');
+              } else if (playerInfo[4] == false) {
+                alert('You still need to submit your ending total and verify all player withdrawal requests.')
+              } else if (playerInfo[5] == false) {
+                alert('You still need to verify player requests.')
+              } else {      
               const result = tx(writeContracts.YourContract.payout(), update => {
               console.log("📡 Transaction Update:", update);
               if (update && (update.status === "confirmed" || update.status === 1)) {
@@ -427,7 +475,7 @@ function Game({
               }});
               console.log("awaiting metamask/web3 confirm result...", result);
               console.log(await result);
-            }}>Payout</Button>
+            }}}>Payout</Button>
         </div>
 
             

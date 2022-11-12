@@ -5,7 +5,7 @@
       "chainId": "31337",
       "contracts": {
         "YourContract": {
-          "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+          "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
           "abi": [
             {
               "inputs": [],
@@ -16,13 +16,19 @@
               "anonymous": false,
               "inputs": [
                 {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "sender",
+                  "type": "address"
+                },
+                {
                   "indexed": false,
-                  "internalType": "uint256",
-                  "name": "gameNumber",
-                  "type": "uint256"
+                  "internalType": "string",
+                  "name": "message",
+                  "type": "string"
                 }
               ],
-              "name": "IncGameNumber",
+              "name": "Log",
               "type": "event"
             },
             {
@@ -47,6 +53,45 @@
             {
               "stateMutability": "payable",
               "type": "fallback"
+            },
+            {
+              "inputs": [],
+              "name": "_feesPending",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "_gameNumber",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "_initFee",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
             },
             {
               "inputs": [
@@ -77,25 +122,6 @@
               "name": "addReq",
               "outputs": [],
               "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "",
-                  "type": "address"
-                }
-              ],
-              "name": "addressToNum",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
               "type": "function"
             },
             {
@@ -132,32 +158,6 @@
               "name": "changeInitFee",
               "outputs": [],
               "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "feesPending",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "gameNumber",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
               "type": "function"
             },
             {
@@ -308,25 +308,6 @@
                   "type": "address"
                 }
               ],
-              "name": "getMapping",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "addr",
-                  "type": "address"
-                }
-              ],
               "name": "getOtherPlayerInfo",
               "outputs": [
                 {
@@ -446,13 +427,71 @@
               "type": "function"
             },
             {
-              "inputs": [],
-              "name": "getTestMapping",
-              "outputs": [
+              "inputs": [
                 {
                   "internalType": "uint256",
-                  "name": "",
+                  "name": "gameId",
                   "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "playerIndex",
+                  "type": "uint256"
+                }
+              ],
+              "name": "getTest",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "string",
+                      "name": "name",
+                      "type": "string"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "gameId",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "buyinAmount",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "withdrawalAmount",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "withdrawalReq",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "verifyReqs",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "hasWithdrawn",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isInGame",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isHost",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct YourContract.Player",
+                  "name": "",
+                  "type": "tuple"
                 }
               ],
               "stateMutability": "view",
@@ -517,19 +556,6 @@
                   "internalType": "bool",
                   "name": "isActive",
                   "type": "bool"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "initFee",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
                 }
               ],
               "stateMutability": "view",
@@ -635,20 +661,6 @@
               "type": "function"
             },
             {
-              "inputs": [],
-              "name": "setMapping",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [],
-              "name": "setTestMapping",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
               "inputs": [
                 {
                   "internalType": "string",
@@ -677,25 +689,6 @@
               "name": "terminateBuyin",
               "outputs": [],
               "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "",
-                  "type": "address"
-                }
-              ],
-              "name": "testMapping",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
               "type": "function"
             },
             {

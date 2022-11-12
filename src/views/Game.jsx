@@ -2,10 +2,12 @@ import { useContractReader } from "eth-hooks";
 import { ethers, utils } from "ethers";
 import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { Button, Input, Table, Space, Tag, Spin  } from "antd";
+import { Button, Input, Table, Card, Col, Row  } from "antd";
 import { storeKeyNameFromField } from "@apollo/client/utilities";
 import { Account, Address, Balance, Events } from "../components";
 import { local } from "web3modal";
+import { getByTestId } from "@testing-library/dom";
+import { useEffect } from "react";
 
 
 /**
@@ -26,8 +28,6 @@ function Game({
     writeContracts,
     Player
 }) {
-  // you can also use hooks locally in your component of choice
-  // in this case, let's keep track of 'purpose' variable from our contract
 
   const gameNumber = useContractReader(readContracts, "YourContract", "gameNumber");
   const [inputValue, setInputValue] = useState("");
@@ -61,9 +61,61 @@ function Game({
 
   //const host = gameInfo[0];
 
-      // Get info for msg.sender -------------------------------------------------------------------------------------------------------------
+  function getPlayerIndex(index) {
+    if (gameInfo == null) {
+      return "Null!";
+    } else {
+      return gameInfo[10][index];
+    }
+  }
 
-  const playerInfo = useContractReader(writeContracts, "YourContract", "getPlayerInfo"); // Getter for msg.sender info
+  function getPlayerNum() {
+    if (gameInfo == null) {
+      return 0;
+    } else {
+      return gameInfo[6];
+    }
+  }
+
+
+  // Checks for msg.sender statuses -------------------------------------------------------------------------------------------------------------------
+  
+  const senderInfo = useContractReader(writeContracts, "YourContract", "getPlayerInfo"); // Indexing game 1, players 0
+
+  function getHostStatus() {
+    if (senderInfo == null || senderInfo[7] == false) {
+      return "Not in game";
+    } else if (senderInfo[8] == false) {
+      return "Member";
+    } else if (senderInfo[8] == true) {
+      return "Host";
+    }
+  }
+
+  function getPlayerId() {
+    if (senderInfo == null || senderInfo[1] == null) {
+      return 0;
+    } else {
+       return senderInfo[1];
+    }
+  }
+
+  function getGameStatus() {
+    if (senderInfo == null || senderInfo[7] == null || senderInfo[7] == false) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+
+  
+
+  //Host 
+
+  //isInGame
+
+  // Information for players --------------------------------------------------------------------------------------------------------------------------------
 
   /*string name; 0
     uint gameId; 1
@@ -75,91 +127,153 @@ function Game({
     bool isInGame; 7
     bool isHost; 8*/
 
-    function getName() {
-      if (playerInfo == null) {
-        return "playerInfo is undefined.";
-      } else if (playerInfo[0] == null) {
-        return "noName";
-      } else {
-        return playerInfo[0].toString();
-      }
-    }
+      // Get playerinfo -------------------------------------------------------------------------------------------------------------------------------
 
-    function getBuyinAmount() {
-      if (playerInfo == null || playerInfo[2] == null) {
+  const [gameIndex, setGameIndex] = useState("1");
+  const [playerIndex, setPlayerIndex] = useState("0");
+
+  let playerInfo = useContractReader(writeContracts, "YourContract", "getTest", [gameIndex, playerIndex]); // Indexing game 1, players 0
+
+  function getName() {
+    if (playerInfo == null) {
+      return "test is undefined.";
+    } else if (playerInfo[0] == null) { // test[0] is the name variable in the struct
+      return "noName";
+    } else {
+      return playerInfo[0]?.toString();
+    }
+  }
+
+  // GETTER FOR ADDRESS
+
+  function getHostStatus() {
+    if (playerInfo == null || playerInfo[7] == false) {
+      return "Not in game";
+    } else if (playerInfo[8] == false) {
+      return "Member";
+    } else if (playerInfo[8] == true) {
+      return "Host";
+    }
+  }
+
+  function getBuyinAmount() {
+    if (playerInfo == null || playerInfo[2] == null) {
+      return "0";
+    } else {
+      return utils.formatEther(playerInfo[2]?.toString());
+    }
+  }
+
+  function getWithdrawalAmount() {
+    if (playerInfo == null || playerInfo[3] == null || playerInfo[4] == 0) {
+      return "0";
+    } else {
+      return utils.formatEther(playerInfo[3]?.toString());
+    }
+  }
+
+  function getVerifStatus() {
+    if (playerInfo == null || playerInfo[5] == null || playerInfo[5] == false) {
+      return "False";
+    } else {
+      return "True";
+    }
+  }
+
+  function hasReq() {
+    if (playerInfo == null || playerInfo[4] == false) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+// For adding players to the array
+
+
+    
+// Leaderboard Values -----------------------------------------------------------------------------------------------------------------------------------
+    /*const numbers = [1, 2, 3, 4, 5];
+    const doubled = numbers.map((number) => number * 2);
+    console.log(doubled);*/
+
+    const [playersLeaderboard, setPlayersLeaderboard] = useState();
+
+    const [pot, setPot] = useState("0");
+  /*
+    useEffect(() => {
+      const updatePot = async() => {
+        try {
+          
+          const gameInfo = await writeContracts.YourContract.getGameInfo(senderInfo[1]);
+        try {
+          setPot(utils.parseEther(gameInfo[4]).toString());
+          
+        } catch(e) {
+          setPot("0");
+          console.log(e);
+        } 
+
+        } catch(e) {
+          console.log(e);
+        }
+      }
+      updatePot();
+    }, [gameInfo, getPlayerNum()]);*/
+
+    function getPot() {
+      if (gameInfo == null || gameInfo[4] == null) {
         return "0";
       } else {
-        return utils.formatEther(playerInfo[2].toString());
+        return utils.formatEther(gameInfo[4]);
       }
     }
 
-
-    function getGameStatus() {
-      if (playerInfo == null || playerInfo[7] == null || playerInfo[7] == false) {
-        return true;
-      } else {
-        return false;
+    useEffect(() => {
+      const updateGameIndex = async() => {
+        try {
+          setGameIndex(getPlayerId().toString());
+        } catch(e) {
+          console.log(e);
+        }
       }
-    }
+    }, [getPlayerId()])
 
-    function getPlayerId() {
-      if (playerInfo == null || playerInfo[1] == null) {
-        return 0;
-      } else {
-        return playerInfo[1];
-      }
-    }
 
-    function getHostStatus() {
-      if (playerInfo == null || playerInfo[7] == false) {
-        return "Not in game";
-      } else if (playerInfo[8] == false) {
-        return "Member";
-      } else if (playerInfo[8] == true) {
-        return "host";
-      }
-    }
+    useEffect(() => {
+      const updateDashboard = async() => {
+        const data = [];
+        for (let i = 0; i < getPlayerNum(); i++) {
+          try {
+            setPlayerIndex(i);
+            console.log("Getting player array: " + i);
+            const playerInformation = await writeContracts.YourContract.getTest(gameIndex, i)
+          
+            try {
+              data.push(
+                {
+                  key: (i + 1).toString(),
+                  name: playerInformation[0],
+                  address: <Address address={getPlayerIndex(i)?.toString()} ensProvider={mainnetProvider} fontSize={16} />,
+                  role: playerInformation[8] ? "Host" : "Guest",
+                  buyinAmount: utils.formatEther(playerInformation[2]),
+                  endingTotal: utils.formatEther(playerInformation[3]),
+                  hasVerified: playerInformation[5] ? "True" : "False"
+                }
+              )
+            } catch(e) {
+              console.log(e);
+            }
+          } catch(e) {
+            console.log(e);
+          }
+        }
+        setPlayersLeaderboard(data);
+      };
+      updateDashboard();
+    }, [gameInfo, getPlayerNum()]);
 
-    // Get info for other players ------------------------------------------------------------------------------------------------------------    
-
-    function getSpecPlayer(index) { // For returning a specific player address from the players array
-      if (gameInfo == null) {
-        return "gameInfo not defined";
-      } else if (gameInfo[10].length == 0) {
-        return "Nobody home!";
-      } else if (0 > gameInfo[10].length - 1) {
-        return "index out of bounds!";
-      } else {
-        return gameInfo[10][index]?.toString();
-      }
-    } 
-
-    
-    const otherPlayerInfo = useContractReader(writeContracts, "YourContract", "getOtherPlayerInfo", [getSpecPlayer(0)]); // Getter for other players based on address input
-    
-
-    function getOtherPlayerName() {
-      if (otherPlayerInfo == null) {
-        return "otherPlayerInfo is undefined."
-      } else if (otherPlayerInfo == null) {
-        return "noName";
-      } else {
-        return otherPlayerInfo.toString();
-      }
-    }
-    
-    const data = [
-      {
-        key: "1",
-        name: 'Alex',
-        address: <Address address={"0x59D101AD9DdeA84C0e11DA137000Dd91A0b20c79"} ensProvider={mainnetProvider} fontSize={16} />,
-        role: "Host",
-        buyinAmount: getBuyinAmount()
-      },
-    ];
-   
-
-  // TABLE VALUES ---------------------------------------------------------------------------------------------------
+  // TABLE VALUES ---------------------------------------------------------------------------------------------------------------------------------
 
   const columns = [
     {
@@ -185,30 +299,51 @@ function Game({
       align: 'center',
     },
     {
-      title: 'Buyin amount',
+      title: 'Starting Amount',
       key: 'buyin-amount',
       dataIndex: 'buyinAmount',
       width: '0px',
       align: 'center',
     },
+    {
+      title: 'Ending Total',
+      key: 'ending-total',
+      dataIndex: 'endingTotal',
+      width: '0px',
+      align: 'center'
+    },
+    {
+      title: 'Has Verified Payout',
+      key: 'has-verified',
+      dataIndex: 'hasVerified',
+      width: '0px',
+      align: 'center'
+    }
   ];
 
-  //<Button onClick={printID}>Print Addresses</Button>
+  //  Card for housing buttons ----------------------------------------------------------------------------------------------------------------------------------
+
+  
+
+
+
+//      <Button onClick={print()}>Print</Button>
+
+  function print() {
+    if (test == null) {
+      console.log("getTest is undefined!")
+    } else {
+      console.log(test?.toString());
+    }
+  }
 
   
   return (
-    <div><br /> 
+    <div><br />
 
-      <h1>{getSpecPlayer()}</h1>
+      <h1>Game Dashboard</h1>
 
-      <h1>{getSpecPlayer(0)}</h1> 
-
-
-      <h1>{getName()}</h1>
-      <h1>{otherPlayerInfo?.toString()}</h1>
-  <h1>{getOtherPlayerName()}</h1>
-
-      { getGameStatus() ?
+      { getGameStatus() == true ?
       
       <div className = "startGame">
         <h1>Join a game</h1>
@@ -271,13 +406,16 @@ function Game({
 
 
       <div>
-
+        <div>
+          <h2>Total Deposits for Game: {getPot()} ether</h2>
+        </div>
         
       {/*For Leaderboard -------------------------------------------------------------------------------------------*/}
 
-      <div className="table"> 
+      <div className="table">
+        
 
-        <Table columns={columns} dataSource={data} pagination={false} />
+        <Table columns={columns} dataSource={playersLeaderboard} pagination={false} />
         
 
       </div>
@@ -287,7 +425,7 @@ function Game({
 
         <div>
           <br />
-          { playerInfo[8] == true ?
+          { getHostStatus() ?
 
           <div>                    
           <Button
@@ -310,46 +448,81 @@ function Game({
               }}>End Buyin for Game {gameId}</Button>
           </div> : null }
 
+          <br />
+
           <Input
-            style={{ width:"300px" }}
-            placeholder="Final value of original buyin"
+            style={{ width:"150px" }}
+            placeholder="Your Ending Total"
             type="text"
             value={withdrawalReq}
             name={req}
             onChange={(e) => setWithdrawalReq(e.target.value)}>
           </Input>
 
+
           <Button
             type="primary"
+            className="requestButton"
             style={{ marginTop: 8 }}
             onClick={async () => { 
               if (withdrawalReq == "") {
                 alert("Enter your ending game total to proceed.");
                 return;
-              } else {      
-              const result = tx(writeContracts.YourContract.addReq(playerInfo[1].toString(), utils.parseEther(`${withdrawalReq?.toString()}`)
-              ), update => {
-                  console.log("📡 Transaction Update:", update);
+              } else {
+                if (gameInfo[8] == false) {
+                  alert('Make sure that your host has ended the buyin period.')
+                } else {    
+                  const result = tx(writeContracts.YourContract.addReq(playerInfo[1].toString(), utils.parseEther(`${withdrawalReq?.toString()}`)
+                  ), update => {
+                    console.log("📡 Transaction Update:", update);
                     if (update && (update.status === "confirmed" || update.status === 1)) {
                       console.log(" 🍾 Transaction " + update.hash + " finished!");
                       console.log(" ⛽️ " + update.gasUsed + "/" + (update.gasLimit || update.gas) + " @ " + parseFloat(update.gasPrice) / 1000000000 + " gwei");
                     } else {
                       return;
-                  }});
+                }});
                     console.log("awaiting metamask/web3 confirm result...", result);
                     console.log(await result);
-          }}}>Add Request</Button>    
+          }}}}>Add a Request</Button>  
 
+          <Button
+            type="primary"
+            style={{ marginTop: 8 }}
+            onClick={async () => { 
+              if (playerInfo[4] == false) {
+                alert("You must submit a request in order to revoke it.");
+              } else {
+                if (gameInfo[8] == false) {
+                  alert('Make sure that your host has ended the buyin period.')
+                } else {    
+                  const result = tx(writeContracts.YourContract.abortReq(playerInfo[1].toString()
+                  ), update => {
+                    console.log("📡 Transaction Update:", update);
+                    if (update && (update.status === "confirmed" || update.status === 1)) {
+                      console.log(" 🍾 Transaction " + update.hash + " finished!");
+                      console.log(" ⛽️ " + update.gasUsed + "/" + (update.gasLimit || update.gas) + " @ " + parseFloat(update.gasPrice) / 1000000000 + " gwei");
+                    } else {
+                      return;
+                }});
+                    console.log("awaiting metamask/web3 confirm result...", result);
+                    console.log(await result);
+          }}}}>Revert a Request</Button>      
 
         </div>
 
-           
+        <br />   
+
         <div>
 
           <Button
             type="primary"
             style={{ marginTop: 8 }}
-            onClick={async () => {     
+            onClick={async () => {
+              if (playerInfo[4] == false) {
+                alert('You must submit your ending total before verifying other players\' amounts.')
+              } else if (gameInfo[8] == false) { 
+                alert('Make sure that your host has ended the buyin period.');
+              } else {
               const result = tx(writeContracts.YourContract.verifyRequests(playerInfo[1].toString()), update => {
               console.log("📡 Transaction Update:", update);
             if (update && (update.status === "confirmed" || update.status === 1)) {
@@ -360,13 +533,21 @@ function Game({
             }});
             console.log("awaiting metamask/web3 confirm result...", result);
             console.log(await result);
-            }}>Verify Requests</Button>   
-        </div>  
-        <div>
+            }}}>Verify Requests</Button>   
+          
+        
           <Button
+            className="payoutButton"
             type="primary"
             style={{ marginTop: 8 }}
-            onClick={async () => {     
+            onClick={async () => {
+              if (gameInfo[8] == false) {
+                alert('You still have several steps before payout, including the host ending the buyin period, submitting ending totals, and verifying totals.');
+              } else if (playerInfo[4] == false) {
+                alert('You still need to submit your ending total and verify all player withdrawal requests.')
+              } else if (playerInfo[5] == false) {
+                alert('You still need to verify player requests.')
+              } else {      
               const result = tx(writeContracts.YourContract.payout(), update => {
               console.log("📡 Transaction Update:", update);
               if (update && (update.status === "confirmed" || update.status === 1)) {
@@ -377,7 +558,7 @@ function Game({
               }});
               console.log("awaiting metamask/web3 confirm result...", result);
               console.log(await result);
-            }}>Payout</Button>
+            }}}>Payout</Button>
         </div>
 
             
